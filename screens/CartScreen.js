@@ -23,7 +23,7 @@ export default function CartScreen() {
             borderRadius: 50,
             shadowColor: "black",
             shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
+            shadowOpacity: 0.5,
           }}
         >
           <Icon.ArrowLeft strokeWidth={3} stroke="white" />
@@ -167,6 +167,7 @@ export default function CartScreen() {
           <Text style={{ color: themeColors.text }}>$22</Text>
         </View>
         <TouchableOpacity
+          onPress={() => navigation.navigate("OrderPreparing")}
           style={{
             backgroundColor: themeColors.bgColor(1),
             borderRadius: 50,
