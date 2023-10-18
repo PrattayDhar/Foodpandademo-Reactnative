@@ -9,6 +9,7 @@ import React from 'react'
 import Homescreen from './screens/Homescreen';
 import RestaurantScreen from './screens/RestaurantScreen';
 import VisitorPage from './screens/Visitor';
+import CartScreen from './screens/CartScreen';
 
 
 
@@ -23,6 +24,7 @@ export default function Navigation() {
         <Stack.Screen name="visitor" component={VisitorPage} />
         <Stack.Screen name="Home" component={Homescreen} />
         <Stack.Screen name="Restaurant" component={RestaurantScreen} />
+        <Stack.Screen name="Cart" options={{presentation:'modal'}} component={CartScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

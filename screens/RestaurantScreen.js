@@ -4,6 +4,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Icon from 'react-native-feather';
 import { themeColors } from '../theam';
 import DishRow from '../components/dishRow';
+import CartIcon from '../components/carticon';
+import { StatusBar } from 'expo-status-bar';
 
 export default function RestaurantScreen() {
   const { params } = useRoute();
@@ -12,17 +14,19 @@ export default function RestaurantScreen() {
 
   return (
     <View>
+      <CartIcon/>
+      <StatusBar style="light"/>
       <ScrollView>
         <View style={{ position: 'relative' }}>
           <Image
-            style={{ width: '100%', height: 180 }} // Adjust the height as needed
+            style={{ width: '100%', height: 450 }}
             source={item.image}
           />
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={{
               position: 'absolute',
-              top: 14,
+              top: 40,
               left: 4,
               backgroundColor: themeColors.bgColor(1),
               padding: 10,
