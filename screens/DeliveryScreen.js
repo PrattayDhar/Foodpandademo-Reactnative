@@ -1,14 +1,22 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { featured } from "../api";
+// import { featured } from "../api";
 import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import { themeColors } from "../theam";
 import * as Icon from "react-native-feather";
+import { useDispatch, useSelector } from "react-redux";
+import { selectRestaurant } from "../slices/restaruntSlice";
+import { emptyCart } from "../slices/cartSlice";
 
 export default function DeliveryScreen() {
-  const restaurant = featured.restaurants[0];
+const restaurant = useSelector(selectRestaurant);
   const navigation = useNavigation();
+  const dispatch=useDispatch();
+  const cancelOrder=()=>{
+    navigation.navigate('Home');
+    dispatch(emptyCart());
+  }
 
   return (
     <View style={styles.container}>
@@ -60,7 +68,7 @@ export default function DeliveryScreen() {
             <Text style={styles.riderRole}>Your Rider</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={()=>navigation.navigate('Home')} style={styles.cancelButton}>
+        <TouchableOpacity onPress={cancelOrder} style={styles.cancelButton}>
           <Icon.X stroke={"red"} strokeWidth={4} />
         </TouchableOpacity>
       </View>

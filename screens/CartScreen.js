@@ -1,13 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import * as Icon from "react-native-feather";
 import { useNavigation } from "@react-navigation/native";
 import { themeColors } from "../theam";
-import { featured } from "../api";
+import { useSelector } from "react-redux";
+import { selectRestaurant } from "../slices/restaruntSlice";
+import { selectCartItems, selectCartTotal } from "../slices/cartSlice";
 
 export default function CartScreen() {
-  const restaurant = featured.restaurants[0];
+  const restaurant = useSelector(selectRestaurant);
   const navigation = useNavigation();
+
+  const cartItems = useSelector(selectCartItems);
+  const [groupedItems, setGroupedItems] = useState({});
+  const deliveryFee = 2; // Set your delivery fee here
+
+  useEffect(() => {
+    const groupedItems = cartItems.reduce((group, item) => {
+      if (group[item.id]) {
+        group[item.id].push(item);
+      } else {
+        group[item.id] = [item];
+      }
+      return group;
+    }, {});
+    setGroupedItems(groupedItems);
+  }, [cartItems]);
+
+  // Calculate the subtotal
+  const subtotal = Object.values(groupedItems).reduce((total, items) => {
+    const item = items[0]; // Assuming all items have the same price
+    return total + item.price * items.length;
+  }, 0);
+
+  // Calculate the order total
+  const orderTotal = subtotal + deliveryFee;
 
   return (
     <View style={{ flex: 1 }}>
@@ -18,15 +45,20 @@ export default function CartScreen() {
             position: "absolute",
             top: 50,
             left: 4,
-            backgroundColor: themeColors.bgColor(1),
-            padding: 10,
-            borderRadius: 50,
             shadowColor: "black",
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.5,
           }}
         >
-          <Icon.ArrowLeft strokeWidth={3} stroke="white" />
+          <View
+            style={{
+              backgroundColor: themeColors.bgColor(1),
+              padding: 10,
+              borderRadius: 50,
+            }}
+          >
+            <Icon.ArrowLeft strokeWidth={3} stroke="white" />
+          </View>
         </TouchableOpacity>
         <Text
           style={{
@@ -72,56 +104,46 @@ export default function CartScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 50 }}
       >
-        {restaurant.dishes.map((dish, index) => (
-          <View
-            key={index}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 2,
-              paddingHorizontal: 10,
-            }}
-          >
-            <Text
+        {Object.entries(groupedItems).map(([key, items]) => {
+          let dish = items[0];
+          return (
+            <View
+              key={key}
               style={{
-                fontSize: 18,
-                fontWeight: "bold",
-                color: themeColors.text,
+                flexDirection: "row",
+                alignItems: "center",
+                marginVertical: 2,
+                paddingHorizontal: 10,
               }}
             >
-              {" "}
-              2 x
-            </Text>
-            <Image
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-              }}
-              source={dish.image}
-            />
-            <Text style={{ flex: 1, paddingLeft: 10, fontWeight: "bold" }}>
-              {dish.name}
-            </Text>
-            <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-              ${dish.price}
-            </Text>
-            <TouchableOpacity
-              style={{
-                padding: 10,
-                borderRadius: 50,
-                backgroundColor: themeColors.bgColor(1),
-              }}
-            >
-              <Icon.Minus
-                strokeWidth={2}
-                height={20}
-                width={20}
-                stroke="white"
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  color: themeColors.text,
+                }}
+              >
+                {" "}
+                {items.length}x
+              </Text>
+              <Image
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 40,
+                }}
+                source={dish.image}
               />
-            </TouchableOpacity>
-          </View>
-        ))}
+              <Text style={{ flex: 1, paddingLeft: 10, fontWeight: "bold" }}>
+                {dish.name}
+              </Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+                ${dish.price}
+              </Text>
+             
+            </View>
+          );
+        })}
       </ScrollView>
       {/* Calculation  */}
       <View
@@ -142,7 +164,7 @@ export default function CartScreen() {
           }}
         >
           <Text style={{ flex: 1, color: themeColors.text }}>Subtotal</Text>
-          <Text style={{ color: themeColors.text }}>$20</Text>
+          <Text style={{ color: themeColors.text }}>${subtotal}</Text>
         </View>
         <View
           style={{
@@ -153,7 +175,7 @@ export default function CartScreen() {
           }}
         >
           <Text style={{ flex: 1, color: themeColors.text }}>Delivery Fee</Text>
-          <Text style={{ color: themeColors.text }}>$2</Text>
+          <Text style={{ color: themeColors.text }}>${deliveryFee}</Text>
         </View>
         <View
           style={{
@@ -164,7 +186,7 @@ export default function CartScreen() {
           }}
         >
           <Text style={{ flex: 1, color: themeColors.text }}>Order Total</Text>
-          <Text style={{ color: themeColors.text }}>$22</Text>
+          <Text style={{ color: themeColors.text }}>${orderTotal}</Text>
         </View>
         <TouchableOpacity
           onPress={() => navigation.navigate("OrderPreparing")}

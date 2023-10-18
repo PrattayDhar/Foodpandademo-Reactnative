@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import cartSlice from "./slices/cartSlice";
-import restaurantSlice from "./slices/restaurantSlice"; // Corrected import
+import restaruntSlice from "./slices/restaruntSlice";
 
 export const store = configureStore({
   reducer: {
     cart: cartSlice,
-    restaurant: restaurantSlice, // Use restaurantSlice instead of restaruntSlice
+    restaurant:restaruntSlice
   },
 });

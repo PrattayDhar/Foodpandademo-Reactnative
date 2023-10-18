@@ -2,8 +2,27 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import * as Icon from "react-native-feather";
 import { themeColors } from "../theam";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  removeFromCart,
+  selectCartItemsById,
+} from "../slices/cartSlice";
 
 export default function DishRow({ item }) {
+  const dispatch = useDispatch();
+  const totalItems = useSelector((state) =>
+    selectCartItemsById(state, item.id)
+  );
+
+  const handleIncrease = () => {
+    dispatch(addToCart(item));
+  };
+
+  const handleDecrease = () => {
+    dispatch(removeFromCart(item.id));
+  };
+
   return (
     <View
       style={{
@@ -43,13 +62,14 @@ export default function DishRow({ item }) {
           </Text>
           <View
             style={{
-                paddingLeft:"30%",
+              paddingLeft: "30%",
               flexDirection: "row",
               justifyContent: "flex-end",
               alignItems: "center",
             }}
           >
             <TouchableOpacity
+              onPress={handleDecrease}
               style={{
                 padding: 8,
                 borderRadius: 20,
@@ -58,8 +78,11 @@ export default function DishRow({ item }) {
             >
               <Icon.Minus strokeWidth={2} height={20} stroke="white" />
             </TouchableOpacity>
-            <Text style={{ paddingLeft: 12, paddingRight: 12 }}>{2}</Text>
+            <Text style={{ paddingLeft: 12, paddingRight: 12 }}>
+              {totalItems.length}
+            </Text>
             <TouchableOpacity
+              onPress={handleIncrease}
               style={{
                 padding: 8,
                 borderRadius: 20,

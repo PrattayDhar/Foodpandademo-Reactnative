@@ -2,9 +2,14 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { themeColors } from "../theam";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectCartItems, selectCartTotal } from "../slices/cartSlice";
 
 export default function CartIcon() {
   const navigation=useNavigation();
+  const cartItems = useSelector(selectCartItems);
+  const cartTotal=useSelector(selectCartTotal)
+  if (!cartItems.length) return;
   return (
     <View
       style={{
@@ -40,7 +45,7 @@ export default function CartIcon() {
           }}
         >
           <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>
-            3
+            {cartItems.length}
           </Text>
         </View>
         <Text
@@ -55,7 +60,7 @@ export default function CartIcon() {
           View Cart
         </Text>
         <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>
-          $23
+         {cartTotal}
         </Text>
       </TouchableOpacity>
     </View>
